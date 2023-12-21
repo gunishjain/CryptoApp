@@ -40,7 +40,7 @@ class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRe
         }
     }
 
-    private fun getCoinDetails(coinId: String) {
+     fun getCoinDetails(coinId: String) {
         viewModelScope.launch {
             _coinState.value = UiState.Loading
             repository.getCoinDetail(coinId)
