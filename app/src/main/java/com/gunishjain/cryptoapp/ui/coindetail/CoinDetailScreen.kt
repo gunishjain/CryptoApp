@@ -1,12 +1,10 @@
 package com.gunishjain.cryptoapp.ui.coindetail
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -14,16 +12,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.gunishjain.cryptoapp.data.models.CoinDetail
 import com.gunishjain.cryptoapp.ui.base.ShowProgressBar
 import com.gunishjain.cryptoapp.ui.base.ShowToast
@@ -73,12 +67,19 @@ fun CoinDetailCard(uiState: UiState<CoinDetail>) {
 
 @Composable
 fun CoinDetailItem(coin: CoinDetail) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         NameText(coin.name)
         DescriptionText(coin)
-//        SourceText(article.source)
+        DetailText("Max Supply: ${coin.max_supply}")
+        DetailText("Total Supply: ${coin.total_supply}")
+        DetailText("Market Cap: ${coin.quotes.USD.market_cap}")
+        DetailText("% Change 24 Hr: ${coin.quotes.USD.percent_change_24h}")
+        DetailText("% Change 30 Days: ${coin.quotes.USD.percent_change_30d}")
+        DetailText("% Change 1 Yr: ${coin.quotes.USD.percent_change_1y}")
+        DetailText("Volume in 24 Hr: ${coin.quotes.USD.volume_24h}")
     }
 }
 
@@ -99,29 +100,59 @@ fun NameText(name: String?) {
 @Composable
 fun DescriptionText(coin: CoinDetail) {
 
-    Row(modifier = Modifier.fillMaxWidth().padding(start = 2.dp),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 2.dp),
     ) {
 
-        Box(modifier = Modifier.size(75.dp,25.dp)
+        Box(
+            modifier = Modifier
+                .size(55.dp, 25.dp)
+                .background(Color(0xFFADD8E6))
         ) {
             Text(
                 text = "RANK ${coin.rank}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
-                maxLines = 2
+                color = Color.Black,
+                maxLines = 2,
+                modifier = Modifier.padding(2.dp)
             )
         }
 
         Text(
+            text = coin.symbol,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            maxLines = 1,
+            modifier = Modifier.padding(2.dp)
+        )
+
+        Text(
             text = "$ ${coin.quotes.USD.price}",
             style = MaterialTheme.typography.titleSmall,
-            color = Color.Gray,
+            color = Color.Black,
             maxLines = 1,
             modifier = Modifier.padding(2.dp)
         )
 
     }
 
+}
+
+
+@Composable
+fun DetailText(detail: String?) {
+    if (!detail.isNullOrEmpty()) {
+        Text(
+            text = detail,
+            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleSmall,
+            color = Color.Black,
+            maxLines = 2,
+            modifier = Modifier.padding(4.dp)
+        )
+    }
 }
 
 //@Composable

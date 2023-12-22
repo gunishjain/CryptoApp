@@ -1,10 +1,6 @@
 package com.gunishjain.cryptoapp.navigation
 
-import android.content.Context
-import android.net.Uri
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gunishjain.cryptoapp.ui.coindetail.CoinDetailRoute
 import com.gunishjain.cryptoapp.ui.coinlist.CoinListRoute
-import com.gunishjain.cryptoapp.ui.coinlist.CoinListScreen
+import com.gunishjain.cryptoapp.ui.search.SearchScreenRoute
 
 @Composable
 fun SetupNavGraph(
@@ -26,12 +22,17 @@ fun SetupNavGraph(
         composable(
             route = Screen.CoinListScreen.route
         ) {
-            CoinListRoute(onCoinClick = {
-                navController.navigate(route= "coindetail/$it")
-            })
+            CoinListRoute(
+                onFabClick = {
+                    navController.navigate(route = "searchcoin")
+                },
+                onCoinClick = {
+                    navController.navigate(route = "coindetail/$it")
+                })
         }
 
-        composable(route = Screen.CoinDetailScreen.route,
+        composable(
+            route = Screen.CoinDetailScreen.route,
             arguments = listOf(
                 navArgument("coinId") {
                     type = NavType.StringType
@@ -44,9 +45,9 @@ fun SetupNavGraph(
         composable(
             route = Screen.SearchCoin.route
         ) {
-//            SearchScreenRoute(onNewsClick = {
-//                openCustomChromeTab(context, it)
-//            })
+            SearchScreenRoute(onCoinClick = {
+
+            })
         }
 
     }
