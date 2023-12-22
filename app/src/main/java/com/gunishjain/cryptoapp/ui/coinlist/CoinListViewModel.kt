@@ -6,6 +6,7 @@ import com.gunishjain.cryptoapp.data.models.Coin
 import com.gunishjain.cryptoapp.data.models.CoinDetail
 import com.gunishjain.cryptoapp.data.repository.CryptoCoinRepository
 import com.gunishjain.cryptoapp.ui.base.UiState
+import com.gunishjain.cryptoapp.utils.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRepository) :
+class CoinListViewModel @Inject constructor(
+    private val repository: CryptoCoinRepository,
+    private val dispatcherProvider: DispatcherProvider
+) :
     ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<List<Coin>>>(UiState.Loading)
@@ -31,9 +35,9 @@ class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRe
         getCoinList()
     }
 
-     fun getCoinList() {
-        viewModelScope.launch {
-            _isLoading.value=true
+    fun getCoinList() {
+        viewModelScope.launch(dispatcherProvider.main) {
+            _isLoading.value = true
             _uiState.value = UiState.Loading
             repository.getCoinList()
                 .catch { e ->
@@ -46,8 +50,8 @@ class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRe
         }
     }
 
-     fun getCoinDetails(coinId: String) {
-        viewModelScope.launch {
+    fun getCoinDetails(coinId: String) {
+        viewModelScope.launch(dispatcherProvider.main) {
             _coinState.value = UiState.Loading
             repository.getCoinDetail(coinId)
                 .catch { e ->

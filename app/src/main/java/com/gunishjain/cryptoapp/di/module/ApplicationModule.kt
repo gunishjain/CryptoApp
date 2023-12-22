@@ -7,6 +7,8 @@ import com.gunishjain.cryptoapp.data.db.CoinDatabase
 import com.gunishjain.cryptoapp.di.BaseUrl
 import com.gunishjain.cryptoapp.utils.AppConstant
 import com.gunishjain.cryptoapp.utils.AppConstant.COIN_DB_NAME
+import com.gunishjain.cryptoapp.utils.DefaultDispatcherProvider
+import com.gunishjain.cryptoapp.utils.DispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +57,10 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun getCoinsDao(db:CoinDatabase ) =  db.getCoinsDao()
+
+    @Provides
+    @Singleton
+    fun provideDispatcherProvider(): DispatcherProvider = DefaultDispatcherProvider()
 
 
 }

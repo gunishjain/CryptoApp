@@ -7,6 +7,7 @@ import com.gunishjain.cryptoapp.data.repository.CryptoCoinRepository
 import com.gunishjain.cryptoapp.ui.base.UiState
 import com.gunishjain.cryptoapp.utils.AppConstant.DEBOUNCE_TIMEOUT
 import com.gunishjain.cryptoapp.utils.AppConstant.MIN_SEARCH_CHAR
+import com.gunishjain.cryptoapp.utils.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchCoinsViewModel @Inject constructor(private val repository: CryptoCoinRepository) :
+class SearchCoinsViewModel @Inject constructor(
+    private val repository: CryptoCoinRepository,
+    private val dispatcherProvider: DispatcherProvider
+) :
     ViewModel() {
 
 
@@ -36,7 +40,7 @@ class SearchCoinsViewModel @Inject constructor(private val repository: CryptoCoi
 
 
     private fun createSearchFlow() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.main) {
             searchText.debounce(DEBOUNCE_TIMEOUT)
                 .filter {
                     if (it.isNotEmpty() && it.length >= MIN_SEARCH_CHAR) {
@@ -53,7 +57,7 @@ class SearchCoinsViewModel @Inject constructor(private val repository: CryptoCoi
                             _uiState.value = UiState.Error(e.toString())
                         }
                 }
-                .flowOn(Dispatchers.IO)
+                .flowOn(dispatcherProvider.io)
                 .collect {
                     _uiState.value = UiState.Success(it)
                 }
