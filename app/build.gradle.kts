@@ -85,13 +85,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
-    //koil
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-
-
+    //room
     implementation("androidx.room:room-runtime:2.5.2")
     kapt("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
+
+    implementation("androidx.compose.material:material:1.3.1")
 
 }

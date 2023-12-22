@@ -9,6 +9,7 @@ import com.gunishjain.cryptoapp.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,12 +24,16 @@ class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRe
     private val _coinState = MutableStateFlow<UiState<CoinDetail>>(UiState.Loading)
     val coinState: StateFlow<UiState<CoinDetail>> = _coinState
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     init {
         getCoinList()
     }
 
-    private fun getCoinList() {
+     fun getCoinList() {
         viewModelScope.launch {
+            _isLoading.value=true
             _uiState.value = UiState.Loading
             repository.getCoinList()
                 .catch { e ->
@@ -36,6 +41,7 @@ class CoinListViewModel @Inject constructor(private val repository: CryptoCoinRe
                 }
                 .collect {
                     _uiState.value = UiState.Success(it)
+                    _isLoading.value = false
                 }
         }
     }

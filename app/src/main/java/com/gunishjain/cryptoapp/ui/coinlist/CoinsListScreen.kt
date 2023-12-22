@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -16,6 +19,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +33,7 @@ import com.gunishjain.cryptoapp.ui.base.ShowProgressBar
 import com.gunishjain.cryptoapp.ui.base.ShowToast
 import com.gunishjain.cryptoapp.ui.base.UiState
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CoinListRoute(
     onCoinClick: (coinId: String) -> Unit,
@@ -36,12 +42,20 @@ fun CoinListRoute(
 ) {
 
     val coins = viewModel.uiState.collectAsStateWithLifecycle()
+    val refreshing by viewModel.isLoading.collectAsState()
 
-    Box(modifier = Modifier.padding(4.dp)) {
+    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.getCoinList() })
+
+
+    Box(modifier = Modifier
+        .padding(4.dp)
+        .pullRefresh(pullRefreshState)) {
         CoinListScreen(coins.value, onCoinClick)
         FloatingActionButton(
             onClick = { onFabClick() },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(10.dp)
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(10.dp)
         ) {
             Icon(Icons.Filled.Search, "Search")
         }
@@ -71,7 +85,6 @@ fun CoinListScreen(coinsState: UiState<List<Coin>>, onCoinClick: (coinId: String
 
 @Composable
 fun CoinList(coins: List<Coin>, onCoinClick: (coinId: String) -> Unit) {
-
     LazyColumn {
         items(coins.size) { index ->
             Coin(coins[index], onCoinClick)
